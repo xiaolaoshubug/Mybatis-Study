@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oay.mapper.UserMapper">
+    <select id="selectUser" resultType="com.oay.entity.User">
+        SELECT *
+        FROM mybatis.user
+    </select>
+
+    <insert id="addUser" parameterType="com.oay.entity.User">
+        INSERT INTO mybatis.user(id, name, pwd)
+        VALUES (#{id}, #{name}, #{pwd})
+    </insert>
+    <!-- map 万能map，半路出家，野路子-->
+    <insert id="addUser2" parameterType="map">
+        insert into mybatis.user(id, name, pwd)
+        values (#{userid},#{username},#{password});
+    </insert>
+
+    <update id="updateUser" parameterType="com.oay.entity.User">
+        UPDATE mybatis.user
+        SET name=#{name},
+            pwd=#{pwd}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        DELETE
+        FROM mybatis.user
+        WHERE id = #{id}
+    </delete>
+</mapper>
