@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--引入配置文件properties-->
+    <properties resource="db.properties"/>
+
+    <settings>
+        <!--日志输出-->
+        <setting name="logImpl" value="LOG4J"/>
+        <!--下划线驼峰自动转换-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!--开启缓存：默认是开启的-->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <!--
+            两种方法：第一种可以自定义别名，适用于实体类较少时，第二种只能使用默认别名(实体类首字母小写，也可以通过注解的方式起别名，注解方法在实体类上加注解@Alias("别名"))
+        -->
+        <!--实体类起别名，指定实体类-->
+        <!--<typeAlias type="com.oay.entity.User" alias="user" />-->
+        <!--在没有注解的情况下，会使用 Bean 的首字母小写的非限定类名来作为它的别名-->
+        <package name="com.oay.entity"/>
+    </typeAliases>
+
+    <!--
+    官方原话
+    <properties resource="org/mybatis/example/config.properties">
+        <property name="username" value="dev_user"/>    用户名|密码可以写在这里，配置和标签都设置时，优先使用配置文件的
+        <property name="password" value="F2Fa3!33TYyg"/>
+    </properties>
+    -->
+
+    <!--
+        environments：可以配置多个数据库实例
+        default：     默认数据库实例
+    -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--
+        mappers：加载xxxMapper.xml,不加载则无法启用mybatis
+        没写一个mapper.xml都需要在下面注册
+    -->
+    <mappers>
+        <mapper resource="mapper/BlogMapper.xml"/>
+    </mappers>
+</configuration>

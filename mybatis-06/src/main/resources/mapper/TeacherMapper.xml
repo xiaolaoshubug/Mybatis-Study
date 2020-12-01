@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oay.mapper.TeacherMapper">
+
+    <!--
+        property对应实例字段名，column对应数据库字段名
+        关联->association
+        集合-collection
+        所以association是用于一对一和多对一，而collection是用于一对多的关系
+        JavaType和ofType都是用来指定对象类型的
+        JavaType是用来指定pojo中属性的类型
+        ofType指定的是映射到list集合属性中pojo的类型。
+    -->
+    <select id="getTeacher" parameterType="int" resultMap="TeacherStudent">
+        SELECT s.id sid, s.name sname, t.name tname, t.id tid
+        FROM teacher t
+                 JOIN student s ON t.id = s.tid AND t.id = #{id};
+    </select>
+
+    <resultMap id="TeacherStudent" type="teacher">
+        <result property="name" column="tname"/>
+        <collection property="students" ofType="Student">
+            <result property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="tid" column="tid"/>
+        </collection>
+    </resultMap>
+
+    <select id="getTeacher2" parameterType="int" resultMap="TeacherStudent2">
+        SELECT *
+        FROM teacher
+        WHERE id = #{id};
+    </select>
+
+    <resultMap id="TeacherStudent2" type="teacher">
+        <collection property="students" javaType="ArrayList" ofType="Student" column="id"
+                    select="getStudentByTeacherId"/>
+    </resultMap>
+
+    <select id="getStudentByTeacherId" resultType="student">
+        SELECT *
+        FROM student
+        WHERE tid = #{id};
+    </select>
+
+</mapper>

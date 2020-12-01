@@ -1,0 +1,1 @@
+**mybatis:mybatis¼ÓÔØÅäÖÃÎÄ¼şproperties**

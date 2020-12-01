@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oay.mapper.UserMapper">
+    <!--<select id="getUserById" parameterType="int" resultType="user">
+        SELECT *
+        FROM user
+        WHERE id = #{id}
+    </select>-->
+
+    <!--结果集映射-->
+    <!--
+        id对应select标签的resultMap的属性值
+        type对应实体类的别名，没有别名写全限类名
+        column对应数据库字段名
+        property对应实体类字段名
+        注：字段类型和实体类不一样这时写resultMap去映射，比如下面pwd和password不一致，这时需要映射，一直则不需要在去做映射
+    -->
+    <resultMap id="userMap" type="user">
+        <result column="pwd" property="password" />
+    </resultMap>
+
+    <select id="getUserById" parameterType="int" resultMap="userMap">
+        SELECT *
+        FROM user
+        WHERE id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oay.mapper.BlogMapper">
+
+    <!--开启全局缓存-->
+    <!--这个更高级的配置创建了一个 FIFO 缓存，每隔 60 秒刷新，最多可以存储结果对象或列表的 512 个引用，而且返回的对象被认为是只读的，
+    因此对它们进行修改可能会在不同线程中的调用者产生冲突。-->
+    <!--<cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>-->
+    <!--在当前namespace中开启缓存-->
+    <!--<cache />-->
+    <!-- 自定义开启缓存 -->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <insert id="addBlog" parameterType="blog">
+        INSERT INTO blog
+        VALUES (#{id}, #{title}, #{author}, #{createTime}, #{views})
+    </insert>
+
+    <!--
+        where标签会自动过滤掉 sql语句开头是 and 或 or
+
+        /*
+            sql片段
+                最好基于 单表来定义 sql 片段，提高片段的可重用性
+                引用 sql 片段，如果refid 指定的不在本文件中，那么需要在前面加上 namespace
+        */
+     -->
+    <select id="queryBlog" parameterType="map" resultType="blog">
+        SELECT * from blog
+        <where>
+            <if test="title != null">
+                title = #{title}
+            </if>
+            <if test="author !=null">
+                and author = #{author}
+            </if>
+            <!--<include refid="if-title-author"/>-->
+            <!-- 在这里还可以引用其他的 sql 片段 -->
+        </where>
+    </select>
+
+    <!--
+        注意set是用的“逗号”隔开
+    -->
+    <update id="updateBlog" parameterType="map">
+        update blog
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="author != null">
+                author = #{author}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--
+        choose 标签相当于Java中的switch语法
+        when 标签判断是否有成立的语句，存在成立语句时立即结束判断
+        otherwise 标签，当when标签里面的语句都不成立时使用
+    -->
+    <select id="queryBlogChoose" parameterType="map" resultType="blog">
+        select * from blog
+        <where>
+            <choose>
+                <when test="title != null">
+                    title = #{title}
+                </when>
+                <when test="author != null">
+                    and author = #{author}
+                </when>
+                <otherwise>
+                    and views = #{views}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <sql id="if-title-author">
+        <if test="title !=null">
+            title = #{title}
+        </if>
+        <if test="author !=null">
+            and author = #{author}
+        </if>
+    </sql>
+
+    <select id="queryBlogForeach" parameterType="map" resultType="blog">
+        select * from blog
+        <where>
+            <!--
+               collection:指定输入对象中的集合属性
+               item:每次遍历生成的对象
+               open:开始遍历时的拼接字符串
+               close:结束时拼接的字符串
+               separator:遍历对象之间需要拼接的字符串
+               select * from blog where 1=1 and (id=1 or id=2 or id=3)
+               坑点：open and 后面“（”一定要注意加空格
+            -->
+            <foreach collection="ids" item="id" open="and (" close=")" separator="or">
+                id = #{id}
+            </foreach>
+        </where>
+    </select>
+
+</mapper>
