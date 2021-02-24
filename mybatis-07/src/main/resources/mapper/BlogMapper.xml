@@ -98,7 +98,7 @@
                close:结束时拼接的字符串
                separator:遍历对象之间需要拼接的字符串
                select * from blog where 1=1 and (id=1 or id=2 or id=3)
-               坑点：open and 后面“（”一定要注意加空格
+               坑点：open and 后面“(”一定要注意加空格
             -->
             <foreach collection="ids" item="id" open="and (" close=")" separator="or">
                 id = #{id}
